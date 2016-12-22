@@ -19,8 +19,7 @@ const getFile = async path => {
 		}
 		file = await readFile(path, "utf-8");
 	}catch(e){
-		console.log(e);
-		file = "文件读取失败";
+		file = e.toString();
 	}
 	return file;
 };
