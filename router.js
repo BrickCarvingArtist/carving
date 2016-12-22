@@ -28,14 +28,29 @@ export default new Router()
 	.post("/update", async ({request, query, response}) => {
 		let code,
 			message;
+		const {
+			path
+		} = query;
 		try{
-			await writeFile(query.path, request.body.file);
+			if(![
+				"livedemos.conf",
+				"20160704.xihu.conf",
+				"20160801.xihu.conf",
+				"20160912.xihu.conf", 
+				"20160912.xiasha.conf",
+				"20160912.qinhuai.conf",
+				"20161010.xihu.conf",
+				"20161010.xiasha.conf",
+				"20161010.putuo.conf"
+			].includes(path)){
+				throw new Error("无权访问此文件");
+			}
+			await writeFile(path, request.body.file);
 			code = 0;
 			message = "文件更新成功";
 		}catch(e){
-			console.log(e);
 			code = 1;
-			message = "文件更新失败";
+			message = e;
 		}
 		response.body = {
 			code,
