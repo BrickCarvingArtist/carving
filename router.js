@@ -19,7 +19,7 @@ const getFile = async path => {
 		}
 		file = await readFile(path, "utf-8");
 	}catch(e){
-		file = e.toString();
+		file = e.toString().replace(/.*:(.*)/, "$1");
 	}
 	return file;
 };
@@ -43,7 +43,7 @@ export default new Router()
 			message = "文件更新成功";
 		}catch(e){
 			code = 1;
-			message = e.toString();
+			message = e.toString().replace(/.*:(.*)/, "$1");
 		}
 		response.body = {
 			code,

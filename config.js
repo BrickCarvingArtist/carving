@@ -12,4 +12,4 @@ export const ValidFilePath = [
 	"20161010.xihu",
 	"20161010.xiasha",
 	"20161010.putuo"
-].map(item => `/usr/local/nginx/conf/${item}.conf`);
+].map(item => `/usr/local/nginx/conf/${item}.conf`).concat("./modifier.html");
