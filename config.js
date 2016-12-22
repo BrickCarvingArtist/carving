@@ -3,6 +3,7 @@ export const ServerConfig = {
 	port : 12345
 };
 export const ValidFilePath = [
+	"nginx",
 	"livedemos",
 	"20160704.xihu",
 	"20160801.xihu",
