@@ -1,5 +1,6 @@
 import Router from "koa-router";
 import fs from "fs";
+import {ValidFilePath} from "./config";
 const promisify = fn => function(){
 	return new Promise((resolve, reject) => {
 		fn(...arguments, (err, data) => {
@@ -13,6 +14,9 @@ const writeFile = promisify(fs.writeFile);
 const getFile = async path => {
 	let file;
 	try{
+		if(!ValidFilePath.includes(path)){
+			throw new Error("无权访问此文件");
+		}
 		file = await readFile(path, "utf-8");
 	}catch(e){
 		console.log(e);
@@ -32,25 +36,15 @@ export default new Router()
 			path
 		} = query;
 		try{
-			if(![
-				"livedemos.conf",
-				"20160704.xihu.conf",
-				"20160801.xihu.conf",
-				"20160912.xihu.conf", 
-				"20160912.xiasha.conf",
-				"20160912.qinhuai.conf",
-				"20161010.xihu.conf",
-				"20161010.xiasha.conf",
-				"20161010.putuo.conf"
-			].includes(path)){
-				throw new Error("无权访问此文件");
+			if(!ValidFilePath.includes(path)){
+				throw new Error("无权修改此文件");
 			}
 			await writeFile(path, request.body.file);
 			code = 0;
 			message = "文件更新成功";
 		}catch(e){
 			code = 1;
-			message = e;
+			message = e.toString();
 		}
 		response.body = {
 			code,
