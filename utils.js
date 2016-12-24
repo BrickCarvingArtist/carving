@@ -40,7 +40,7 @@ ${[
 export const compileCSVToStaticGitShell = compileCSV((id, str) => {
 	const conf = str.split(",");
 	return `cd ${GIT_REPOSITORY_PATH_PREFIX}${id}
-if[ ! -d ${GIT_REPOSITORY_PATH_PREFIX}${id} ];
+if[! -d ${GIT_REPOSITORY_PATH_PREFIX}${id}]
 then
 	mkdir ${conf[1]}
 fi
@@ -52,7 +52,7 @@ echo "completely downloaded the repository."\n`;
 export const compileCSVToNodeGitShell = compileCSV((id, str) => {
 	const conf = str.split(",");
 	return `cd ${GIT_REPOSITORY_PATH_PREFIX}${id}
-if[ ! -d ${GIT_REPOSITORY_PATH_PREFIX}${id} ];
+if[! -d ${GIT_REPOSITORY_PATH_PREFIX}${id}]
 then
 	mkdir ${conf[1]}
 fi
