@@ -38,8 +38,8 @@
 				git.emit("ack", "clone", res => console.log(res));
 			};
 			c.onclick = function(){
-				fetch("/")
-			}
+				git.emit("ack", "pull", res => console.log(res));
+			};
 		</script>
 	</body>
 </html>

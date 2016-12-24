@@ -39,22 +39,31 @@ ${[
 });
 export const compileCSVToStaticGitShell = compileCSV((id, str) => {
 	const conf = str.split(",");
-	return `\ncd ${GIT_REPOSITORY_PATH_PREFIX}${id}
-mkdir ${conf[1]}
+	return `cd ${GIT_REPOSITORY_PATH_PREFIX}${id}
+if[! -d ${GIT_REPOSITORY_PATH_PREFIX}${id}];
+then
+	mkdir ${conf[1]}
+fi
 cd ${conf[1]}
 a=$(git clone https://github.com/${conf[3]}.git)
-echo $a`;
+echo $a
+echo "completely downloaded the repository."\n`;
 });
 export const compileCSVToNodeGitShell = compileCSV((id, str) => {
 	const conf = str.split(",");
-	return `\ncd ${GIT_REPOSITORY_PATH_PREFIX}${id}
-mkdir ${conf[1]}
+	return `cd ${GIT_REPOSITORY_PATH_PREFIX}${id}
+if[! -d ${GIT_REPOSITORY_PATH_PREFIX}${id}];
+then
+	mkdir ${conf[1]}
+fi
 cd ${conf[1]}
 a=$(git clone https://www.github.com/${conf[3]}.git)
 echo $a
+echo "download complete."
 cd ${conf[3].split("/")[1]}
 a=$(npm install --production)
-echo $a`;
+echo $a
+echo "completely downloaded the dependencies."\n`;
 });
 export const getHTML = async (time, area) => {
 	return (await readFile("./static/modifier.html", "utf-8")).replace(/(\/upload)/, "$1" + `?id=${time}.${area}`);
