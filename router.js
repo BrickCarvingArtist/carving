@@ -1,73 +1,43 @@
 import Router from "koa-router";
-import fs from "fs";
-import {FilePathPrefix, ValidFilePath} from "./config";
-const promisify = fn => function(){
-	return new Promise((resolve, reject) => {
-		fn(...arguments, (err, data) => {
-			err && reject(err);
-			resolve(data);
-		});
-	});
-};
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
-const readNginxConf = async path => {
-	let file;
-	try{
-		file = await readFile(`${FilePathPrefix}${path}.conf`, "utf-8");
-	}catch(e){
-		file = e.toString().replace(/.*:(.*)/, "$1");
-	}
-	return file;
-};
-const writeNginxConf = async (path, file, validFilePath) => {
-	let code,
-		message;
-	try{
-		if(!validFilePath.includes(path)){
-			throw new Error("无权修改此文件");
-		}
-		await writeFile(`${FilePathPrefix}${path}.conf`, file);
-		code = 0;
-		message = "文件更新成功";
-	}catch(e){
-		code = 1;
-		message = e.toString().replace(/.*:(.*)/, "$1");
-	}
-	return {
-		code,
-		message
-	};
-};
-const getHTML = async (path, validFilePath) => {
-	try{
-		if(!validFilePath.includes(path)){
-			throw new Error("无权访问此文件");
-		}
-		return (await readFile("./modifier.html", "utf-8")).replace(/(<(textarea).*>)(<\/\2>)/, "$1" + await readNginxConf(path) + "$3");
-	}catch(e){
-		return e.toString().replace(/.*:(.*)/, "$1");
-	}
-};
+import multer from "koa-multer";
+import {VALID_TIME_AREA, NGINX_CONF_PATH_PREFIX} from "./config";
+import {
+	readFile, writeFile, exec, getHTML,
+	compileCSVToNginxConfig,
+	compileCSVToStaticGitShell, compileCSVToNodeGitShell
+} from "./utils";
+import {createReadStream} from "fs";
 export default new Router()
-	.get("/23336666/:path", async ({params, response}) => {
-		response.body = await getHTML(params.path, ValidFilePath);
-	})
-	.get("/guanjunpeng/:path", async ({params, response}) => {
-		response.body = await getHTML(params.path, ValidFilePath.filter(item => item.includes("20160912")));
-	})
-	.get("/xieyinping/:path", async ({params, response}) => {
-		response.body = await getHTML(params.path, ValidFilePath.filter(item => item.includes("20161010")));
-	})
-	.post("/update", async ({request, query, response}) => {
+	.get("/:time/:area", async ({params, query, response}) => {
 		const {
-			user,
-			path
+			time,
+			area
+		} = params;
+		response.body = ["无权访问此地址", await getHTML(time, area)][+VALID_TIME_AREA[time].includes(area)];
+	})
+	.post("/upload", multer().single("file"), async({req, query, response}) => {
+		const file = req.file.buffer.toString();
+		const {
+			id
 		} = query;
-		response.body = await writeNginxConf(path, request.body.file, ValidFilePath.filter(item => item.includes({
-			23336666 : item,
-			guanjunpeng : "20160912",
-			xieyinping : "20161010"
-		}[user])));
+		let message;
+		try{
+			await writeFile(`./test/${id}.conf`, compileCSVToNginxConfig(id, file));
+			await writeFile("./git.sh", compileCSVToStaticGitShell(id, file));
+			message = "文件提交成功";
+		}catch(e){
+			message = e.toString().replace(/.*:(.*)/, "$1");
+		}
+		response.body = message;
+	})
+	.get("/restart", async ({response}) => {
+		let message;
+		try{
+			await exec("nginx -s reload");
+			message = "服务器重启成功";
+		}catch(e){
+			message = e.toString().replace(/.*:(.*)/, "$1");
+		}
+		response.body = message;
 	})
 	.routes();

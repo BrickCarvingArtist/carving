@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>学生github项目集合表上传</title>
+	</head>
+	<body>
+		<input type="file" id="a" />
+		<input type="button" value="发布仓库" id="b" />
+		<input type="button" value="更新仓库" id="c" />
+		<input type="button" value="构建" id="d" />
+		<script src="/socket.io.js"></script>
+		<script>
+			let body,
+				file;
+			a.onchange = function(){
+				file = this.files[0];
+				if(!file){
+					return console.warn("请上传学生github项目集合表！");
+				}
+				if(file.type.includes("csv")){
+					body = new FormData;
+					body.append("file", file);
+					return fetch("/upload", {
+						method : "post",
+						body
+					}).then(res => res.text()).then(message => {
+						console.info(message);
+					});
+				}
+				console.warn("上传学生github项目集合表格式有误！");
+			};
+			let git = io("/git");
+			git.on("message", data => {
+				console.log(data);
+			});
+			b.onclick = function(){
+				git.emit("ack", "clone", res => console.log(res));
+			};
+			c.onclick = function(){
+				fetch("/")
+			}
+		</script>
+	</body>
+</html>
