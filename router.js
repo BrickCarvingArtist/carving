@@ -6,7 +6,6 @@ import {
 	compileCSVToNginxConfig,
 	compileCSVToStaticGitShell, compileCSVToNodeGitShell
 } from "./utils";
-import {createReadStream} from "fs";
 export default new Router()
 	.get("/:time/:area", async ({params, query, response}) => {
 		const {
@@ -22,7 +21,7 @@ export default new Router()
 		} = query;
 		let message;
 		try{
-			await writeFile(`./test/${id}.conf`, compileCSVToNginxConfig(id, file));
+			await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(id, file));
 			await writeFile("./git.sh", compileCSVToStaticGitShell(id, file));
 			message = "文件提交成功";
 		}catch(e){
