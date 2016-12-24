@@ -31,6 +31,7 @@ export default new Router()
 	.get("/restart", async ({response}) => {
 		let message;
 		try{
+			await exec("nginx -s stop");
 			await exec(`nginx -c ${NGINX_CONF_PATH_PREFIX}nginx.conf`);
 			message = "main server successfully restarted.";
 		}catch(e){
