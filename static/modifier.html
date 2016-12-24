@@ -6,40 +6,43 @@
 	</head>
 	<body>
 		<input type="file" id="a" />
-		<input type="button" value="发布仓库" id="b" />
-		<input type="button" value="更新仓库" id="c" />
-		<input type="button" value="构建" id="d" />
+		<input type="button" value="克隆/更新仓库" id="b" />
+		<input type="button" value="重启服务器" id="c" />
 		<script src="/socket.io.js"></script>
 		<script>
-			let body,
-				file;
-			a.onchange = function(){
-				file = this.files[0];
-				if(!file){
-					return console.warn("请上传学生github项目集合表！");
+			!(() => {
+				let git = io("/git");
+				function log(){
+					return console.log(...arguments);
 				}
-				if(file.type.includes("csv")){
-					body = new FormData;
-					body.append("file", file);
-					return fetch("/upload", {
-						method : "post",
-						body
-					}).then(res => res.text()).then(message => {
-						console.info(message);
-					});
-				}
-				console.warn("上传学生github项目集合表格式有误！");
-			};
-			let git = io("/git");
-			git.on("message", data => {
-				console.log(data);
-			});
-			b.onclick = function(){
-				git.emit("ack", "clone", res => console.log(res));
-			};
-			c.onclick = function(){
-				git.emit("ack", "pull", res => console.log(res));
-			};
+				git.on("message", data => {
+					log(data);
+				});
+				b.onclick = () => {
+					git.emit("ack", location.pathname.slice(1).replace("/", "."), res => log(res));
+				};
+				c.onclick = () => {
+					fetch("/restart").then(res => res.text()).then(message => log(message));
+				};
+				a.onchange = (() => {
+					let file, body;
+					return e => {
+						file = e.target.files[0];
+						if(!file){
+							return log("请上传学生github项目集合表！");
+						}
+						if(file.type.includes("csv")){
+							body = new FormData;
+							body.append("file", file);
+							return fetch("/upload", {
+								method : "post",
+								body
+							}).then(res => res.text()).then(message => log(message));
+						}
+						log("上传学生github项目集合表格式有误！");
+					};
+				})();
+			})();
 		</script>
 	</body>
 </html>

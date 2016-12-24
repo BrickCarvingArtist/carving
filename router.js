@@ -3,8 +3,7 @@ import multer from "koa-multer";
 import {VALID_TIME_AREA, NGINX_CONF_PATH_PREFIX} from "./config";
 import {
 	readFile, writeFile, exec, getHTML,
-	compileCSVToNginxConfig,
-	compileCSVToStaticGitShell, compileCSVToNodeGitShell
+	compileCSVToNginxConfig, compileCSVToGitShell
 } from "./utils";
 export default new Router()
 	.get("/:time/:area", async ({params, query, response}) => {
@@ -22,7 +21,7 @@ export default new Router()
 		let message;
 		try{
 			await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(id, file));
-			await writeFile("./git.sh", compileCSVToStaticGitShell(id, file));
+			await writeFile(`./git.${id}.sh`, compileCSVToGitShell(id, file));
 			message = "文件提交成功";
 		}catch(e){
 			message = e.toString().replace(/.*:(.*)/, "$1");
