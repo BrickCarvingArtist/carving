@@ -38,30 +38,50 @@ ${[
 }\n`;
 });
 export const compileCSVToStaticGitShell = compileCSV((id, str) => {
-	const conf = str.split(",");
+	const conf = str.split(","),
+		name = conf[1],
+		projectPath = conf[3],
+		projectName = conf[3].split("/")[1];
 	return `cd ${GIT_REPOSITORY_PATH_PREFIX}${id}
-if[ ! -d "${GIT_REPOSITORY_PATH_PREFIX}${id}/" ]; then
-	mkdir ${conf[1]}
+if [ ! -d ${name} ]
+then
+	mkdir ${name}
 fi
-cd ${conf[1]}
-a=$(git clone https://github.com/${conf[3]}.git)
+cd ${name}
+if [ ! -d ${projectName} ]
+then
+	a=$(git clone https://github.com/${projectPath}.git)
+else
+	a=$(git pull https://github.com/${projectPath}.git)
+fi
 echo $a
 echo "completely downloaded the repository."\n`;
 });
 export const compileCSVToNodeGitShell = compileCSV((id, str) => {
-	const conf = str.split(",");
+	const conf = str.split(","),
+		name = conf[1],
+		projectPath = conf[3],
+		projectName = conf[3].split("/")[1];
 	return `cd ${GIT_REPOSITORY_PATH_PREFIX}${id}
-if[ ! -d "${GIT_REPOSITORY_PATH_PREFIX}${id}/" ]; then
-	mkdir ${conf[1]}
+if [ ! -d ${name} ]
+then
+	mkdir ${name}
 fi
-cd ${conf[1]}
-a=$(git clone https://www.github.com/${conf[3]}.git)
+cd ${name}
+if [ ! -d ${projectName} ]
+then
+	a=$(git clone https://www.github.com/${projectPath}.git)
+else
+	a=$(git pull https://www.github.com/${projectPath}.git)
+fi
 echo $a
-echo "download complete."
-cd ${conf[3].split("/")[1]}
+echo "completely downloaded the repository."
+cd ${projectName}
 a=$(npm install --production)
 echo $a
-echo "completely downloaded the dependencies."\n`;
+echo "completely installed the dependencies."
+node server.js --name=${name}
+echo "completely started the server."\n`;
 });
 export const getHTML = async (time, area) => {
 	return (await readFile("./static/modifier.html", "utf-8")).replace(/(\/upload)/, "$1" + `?id=${time}.${area}`);
