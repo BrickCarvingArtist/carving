@@ -48,12 +48,12 @@ then
 	mkdir ${name}
 fi
 cd ${name}
-if [ ! -d ${projectName} ]
+if [ -d ${projectName} ]
 then
-	a=$(git clone https://github.com/${projectPath}.git)
-else
 	cd ${projectName}
 	a=$(git pull https://github.com/${projectPath}.git)
+else
+	a=$(git clone https://github.com/${projectPath}.git)
 fi
 echo $a
 echo "completely downloaded the repository."\n`;
@@ -69,12 +69,12 @@ then
 	mkdir ${name}
 fi
 cd ${name}
-if [ ! -d ${projectName} ]
+if [ -d ${projectName} ]
 then
-	a=$(git clone https://www.github.com/${projectPath}.git)
-else
 	cd ${projectName}
 	a=$(git pull https://www.github.com/${projectPath}.git)
+else
+	a=$(git clone https://www.github.com/${projectPath}.git)
 fi
 echo $a
 echo "completely downloaded the repository."
@@ -82,7 +82,7 @@ cd ${projectName}
 a=$(npm install --production)
 echo $a
 echo "completely installed the dependencies."
-node server.js --name=${name}
+node server.js --name=${name}_${projectName}
 echo "completely started the server."\n`;
 });
 export const getHTML = async (time, area) => {
