@@ -52,6 +52,7 @@ if [ ! -d ${projectName} ]
 then
 	a=$(git clone https://github.com/${projectPath}.git)
 else
+	cd ${projectName}
 	a=$(git pull https://github.com/${projectPath}.git)
 fi
 echo $a
@@ -72,6 +73,7 @@ if [ ! -d ${projectName} ]
 then
 	a=$(git clone https://www.github.com/${projectPath}.git)
 else
+	cd ${projectName}
 	a=$(git pull https://www.github.com/${projectPath}.git)
 fi
 echo $a
