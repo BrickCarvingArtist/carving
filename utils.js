@@ -51,6 +51,7 @@ cd ${name}
 if [ -d ${projectName} ]
 then
 	cd ${projectName}
+	echo $(pwd)
 	a=$(git pull https://github.com/${projectPath}.git)
 else
 	a=$(git clone https://github.com/${projectPath}.git)
