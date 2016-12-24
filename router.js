@@ -11,7 +11,7 @@ export default new Router()
 			time,
 			area
 		} = params;
-		response.body = ["无权访问此地址", await getHTML(time, area)][+VALID_TIME_AREA[time].includes(area)];
+		response.body = ["access denied", await getHTML(time, area)][+VALID_TIME_AREA[time].includes(area)];
 	})
 	.post("/upload", multer().single("file"), async({req, query, response}) => {
 		const file = req.file.buffer.toString();
@@ -22,7 +22,7 @@ export default new Router()
 		try{
 			await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(id, file));
 			await writeFile(`./git.${id}.sh`, compileCSVToGitShell(id, file));
-			message = "文件提交成功";
+			message = "successfully uploaded the file.";
 		}catch(e){
 			message = e.toString().replace(/.*:(.*)/, "$1");
 		}
@@ -31,8 +31,8 @@ export default new Router()
 	.get("/restart", async ({response}) => {
 		let message;
 		try{
-			await exec("nginx -s reload");
-			message = "服务器重启成功";
+			await exec(`nginx -c ${NGINX_CONF_PATH_PREFIX}nginx.conf`);
+			message = "main server successfully restarted.";
 		}catch(e){
 			message = e.toString().replace(/.*:(.*)/, "$1");
 		}
