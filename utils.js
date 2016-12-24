@@ -29,7 +29,7 @@ server {
 	server_name ${project}.${conf[1]}.${conf[2]}.com;
 	location / {
 ${[
-`		proxy_pass 127.0.0.1:${conf[4]};`,
+`		proxy_pass http://127.0.0.1:${conf[4]};`,
 `		root ${GIT_REPOSITORY_PATH_PREFIX}${id}/${conf[1]}/${project};
 		index index.html;
 		error_page 404 /;`
