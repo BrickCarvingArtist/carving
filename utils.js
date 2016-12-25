@@ -66,8 +66,9 @@ ${[
 a=$(npm install --production)
 echo $a
 echo "completely installed the dependencies."
-node server.js --name=${name}_${projectName}
-echo "completely started the server."\n`,
+pm2 stop ${name}_${projectName}
+a=$(pm2 start server.js --name=${name}_${projectName})
+echo $a\n`,
 ""][+!port]}`;
 });
 export const compileCSVToDNS = str => compileCSV(str => {
