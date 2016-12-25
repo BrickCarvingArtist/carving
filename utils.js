@@ -12,7 +12,7 @@ const promisify = fn => function(){
 	});
 };
 const compileCSV = fn => (file, ...rest) => {
-	let t = file.split(/\r\n/);
+	let t = file.split(/\r?\n/);
 	t.shift();
 	return t.reduce((table, row) => {
 		return table.concat(fn(row, ...rest));
