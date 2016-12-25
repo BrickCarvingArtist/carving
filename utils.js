@@ -93,6 +93,3 @@ export const compileAliyunURI = async option => {
 	const keyValues = await compileToEncode(option);
 	return `https://alidns.aliyuncs.com/?${keyValues}&Signature=${encodeURIComponent(compileSignature(compileStringToSign(keyValues)))}`;
 };
-export const getHTML = async (time, area) => {
-	return (await readFile("./static/carving.html", "utf-8")).replace(/(\/upload)/, "$1" + `?id=${time}.${area}`);
-};

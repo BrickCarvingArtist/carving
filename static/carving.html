@@ -8,44 +8,113 @@
 		<meta name="description" content="BrickCarvingArtist, 砖雕艺术家" />
 		<meta name="author" content="BrickCarvingArtist, 砖雕艺术家" />
 		<link rel="shortcut icon" type="image/ico" href="http://static.ikindness.cn/base/image/favicon.ico" />
+		<style>
+			*{
+				color:#333;
+			}
+			h1{
+				text-indent:1em;
+			}
+			li{
+				padding:20px;
+				border-bottom:1px solid #ccc;
+			}
+			li *{
+				margin-right:10px;
+			}
+			input[type=file]{
+				width:180px;
+				font-size:12px;
+			}
+			input::-webkit-file-upload-button, input[type=button]{
+				font-size:16px;
+				color:#333;
+			}
+			.output{
+				padding:20px;
+				line-height:2;
+			}
+		</style>
 		<title>学生线上项目构建工具</title>
 	</head>
 	<body>
-		<input type="file" id="a" />
-		<input type="button" value="克隆/更新仓库" id="b" />
-		<input type="button" value="重启服务器" id="c" />
+		<h1>学生线上项目构建工具</h1>
+		<li id="20160801.xihu">
+			<b>20160801班 杭州西湖</b>
+			<input type="file" />
+			<input type="button" class="repository" value="克隆/更新仓库" />
+		</li>
+		<li id="20160912.xihu">
+			<b>20160912班 杭州西湖</b>
+			<input type="file" />
+			<input type="button" class="repository" value="克隆/更新仓库" />
+		</li>
+		<li id="20160912.xiasha">
+			<b>20160912班 杭州下沙</b>
+			<input type="file" />
+			<input type="button" class="repository" value="克隆/更新仓库" />
+		</li>
+		<li id="20160912.qinhuai">
+			<b>20160912班 南京秦淮</b>
+			<input type="file" />
+			<input type="button" class="repository" value="克隆/更新仓库" />
+		</li>
+		<li id="20161010.xihu">
+			<b>20161010班 杭州西湖</b>
+			<input type="file" />
+			<input type="button" class="repository" value="克隆/更新仓库" />
+		</li>
+		<li id="20161010.xiasha">
+			<b>20161010班 杭州下沙</b>
+			<input type="file" />
+			<input type="button" class="repository" value="克隆/更新仓库" />
+		</li>
+		<li id="20161010.putuo">
+			<b>20161010班 上海普陀</b>
+			<input type="file" />
+			<input type="button" class="repository" value="克隆/更新仓库" />
+		</li>
+		<li>
+			<input type="button" value="重启服务器" id="restart" />
+		</li>
+		<div id="output"></div>
 		<script src="/socket.io.js"></script>
 		<script>
 			!(() => {
 				let git = io("/git");
-				function log(){
-					return console.log(...arguments);
+				function qsa(selector){
+					return document.querySelectorAll(selector);
+				}
+				function log(text){
+					return output.innerHTML += `<pre>${text}</pre>`;
 				}
 				git.on("message", data => {
 					log(data);
 				});
-				a.onchange = (() => {
+				[].forEach.call(qsa("[type=file]"), item => {
 					let file, body;
-					return e => {
-						file = e.target.files[0];
+					item.onchange = function(){
+						file = this.files[0];
 						if(!file){
 							return log("请上传学生github项目集合表！");
 						}
 						if(file.type.includes("csv")){
 							body = new FormData;
 							body.append("file", file);
-							return fetch("/upload", {
+							return fetch(`/upload?id=${this.parentNode.id}`, {
 								method : "post",
 								body
 							}).then(res => res.text()).then(message => log(message));
 						}
 						log("上传学生github项目集合表格式有误！");
 					};
-				})();
-				b.onclick = () => {
-					git.emit("ack", location.pathname.slice(1).replace("/", "."), res => log(res));
-				};
-				c.onclick = () => {
+				});
+				[].forEach.call(qsa(".repository"), item => {
+					item.onclick = function(){
+						git.emit("ack", this.parentNode.id, res => log(res));
+					};
+				});
+				restart.onclick = () => {
 					fetch("/restart").then(res => res.text()).then(message => log(message));
 				};
 			})();
