@@ -9,4 +9,4 @@ git(new Koa)
 	.use(serve("./static"))
 	.use(bodyParser())
 	.use(routes)
-	.listen(SERVER_CONFIG.port, () => console.log(`The server started on port ${SERVER_CONFIG.port}`));
+	.listen(SERVER_CONFIG.PORT, () => console.log(`The server started on port ${SERVER_CONFIG.PORT}`));

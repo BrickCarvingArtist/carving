@@ -1,7 +1,7 @@
 import Router from "koa-router";
 import multer from "koa-multer";
 import fetch from "node-fetch";
-import {NGINX_CONF_PATH_PREFIX, VALID_TIME_AREA} from "./config";
+import {SERVER_CONFIG, NGINX_CONF_PATH_PREFIX, VALID_TIME_AREA} from "./config";
 import {
 	readFile, writeFile, exec,
 	compileCSVToNginxConfig,
@@ -31,7 +31,7 @@ export default new Router()
 						DomainName : t[0],
 						RR : t[1],
 						Type : "A",
-						Value : "47.90.90.237"
+						Value : SERVER_CONFIG.IP
 					}))).json()).Message);
 				})))).concat("all domain names completely sent to the resolution.").join("\n");
 			}catch(e){
