@@ -15,7 +15,7 @@ export default new Router()
 			time,
 			area
 		} = params;
-		response.body = ["access denied", await getHTML(time, area)][+VALID_TIME_AREA[time].includes(area)];
+		response.body = ["access denied", await getHTML(time, area)][+(VALID_TIME_AREA[time] && VALID_TIME_AREA[time].includes(area))];
 	})
 	.post("/upload", multer().single("file"), async ({req, query, response}) => {
 		const file = req.file.buffer.toString();
@@ -24,6 +24,7 @@ export default new Router()
 		} = query;
 		let message;
 		try{
+			console.log(compileCSVToNginxConfig(file, id));
 			await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(file, id));
 			await writeFile(`./git.${id}.sh`, compileCSVToGitShell(file, id));
 			message = (await Promise.all(compileCSVToDNS(file).split(/\n/).map(async item => new Promise(async (resolve, reject) => {
@@ -51,5 +52,8 @@ export default new Router()
 			message = e.toString().replace(/.*:(.*)/, "$1");
 		}
 		response.body = message;
+	})
+	.get("*", ({response}) => {
+		response.body = "access denied";
 	})
 	.routes();
