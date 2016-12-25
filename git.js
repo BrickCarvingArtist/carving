@@ -8,7 +8,7 @@ export default app => {
 		const gitsh = spawn(`./git.${id}.sh`);
 		gitsh.stdout.on("data", data => git.broadcast("message", data.toString()));
 		gitsh.stderr.on("data", data => git.broadcast("message", data.toString()));
-		gitsh.stdout.on("close", () => git.broadcast("message", "all repositories was published."));
+		gitsh.on("close", code => git.broadcast("message", `all repositories was published.${code}`));
 	});
 	return app;
 };

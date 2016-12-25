@@ -24,8 +24,8 @@ export default new Router()
 		} = query;
 		let message;
 		try{
-			await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(id, file));
-			await writeFile(`./git.${id}.sh`, compileCSVToGitShell(id, file));
+			await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(file, id));
+			await writeFile(`./git.${id}.sh`, compileCSVToGitShell(file, id));
 			message = (await Promise.all(compileCSVToDNS(file).split(/\n/).map(async item => new Promise(async (resolve, reject) => {
 				const t = item.split(",");
 				resolve((await (await fetch(await compileAliyunURI({
