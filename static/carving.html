@@ -104,7 +104,7 @@
 							return fetch(`/upload?id=${this.parentNode.id}`, {
 								method : "post",
 								body
-							}).then(res => res.text()).then(message => log(message));
+							}).then(res => res.text()).then(message => log(message)).catch(err => log("无权使用此功能！"));
 						}
 						log("上传学生github项目集合表格式有误！");
 					};
