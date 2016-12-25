@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>学生github项目集合表上传</title>
+		<title>学生项目线上构建工具</title>
 	</head>
 	<body>
 		<input type="file" id="a" />
@@ -18,12 +18,6 @@
 				git.on("message", data => {
 					log(data);
 				});
-				b.onclick = () => {
-					git.emit("ack", location.pathname.slice(1).replace("/", "."), res => log(res));
-				};
-				c.onclick = () => {
-					fetch("/restart").then(res => res.text()).then(message => log(message));
-				};
 				a.onchange = (() => {
 					let file, body;
 					return e => {
@@ -42,6 +36,12 @@
 						log("上传学生github项目集合表格式有误！");
 					};
 				})();
+				b.onclick = () => {
+					git.emit("ack", location.pathname.slice(1).replace("/", "."), res => log(res));
+				};
+				c.onclick = () => {
+					fetch("/restart").then(res => res.text()).then(message => log(message));
+				};
 			})();
 		</script>
 	</body>
