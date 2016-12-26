@@ -98,7 +98,7 @@
 						if(!file){
 							return log("请上传学生github项目集合表！");
 						}
-						if(file.type.includes("csv")){
+						if(file.type.includes("csv") || file.type.includes("ms-excel")){
 							body = new FormData;
 							body.append("file", file);
 							return fetch(`/upload?id=${this.parentNode.id}`, {
