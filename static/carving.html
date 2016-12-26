@@ -86,7 +86,7 @@
 					return document.querySelectorAll(selector);
 				}
 				function log(text){
-					return output.innerHTML += `<pre>${text}</pre>`;
+					return output.innerHTML = `<pre>${text}</pre>${output.innerHTML}`;
 				}
 				git.on("message", data => {
 					log(data);
