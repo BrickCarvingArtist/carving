@@ -58,12 +58,12 @@ then
 	a=$(git pull https://www.github.com/${projectPath}.git)
 else
 	a=$(git clone https://www.github.com/${projectPath}.git)
+	cd ${projectName}
 fi
 echo $a
 echo "Completely downloaded the repository."
 ${[
-`cd ${projectName}
-a=$(npm install --production)
+`a=$(npm install --production)
 echo $a
 echo "Completely installed the dependencies."\n`,
 ""][+!port]}`;
