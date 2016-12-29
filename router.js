@@ -1,11 +1,13 @@
 import Router from "koa-router";
 import multer from "koa-multer";
 import fetch from "node-fetch";
-import {SERVER_CONFIG, NGINX_CONF_PATH_PREFIX, VALID_TIME_AREA} from "./config";
+import {SERVER_CONFIG, OUTPUT_FILES_PATH_PREFIX, NGINX_CONF_PATH_PREFIX, VALID_TIME_AREA} from "./config";
 import {
 	readFile, writeFile, exec,
 	compileCSVToNginxConfig,
 	compileCSVToGitShell,
+	compileCSVToPM2Shell,
+	compileCSVToPM2Config,
 	compileCSVToDNS,
 	compileAliyunURI
 } from "./utils";
@@ -23,8 +25,10 @@ export default new Router()
 		if(VALID_TIME_AREA[i[0]] && VALID_TIME_AREA[i[0]].includes(i[1])){
 			try{
 				await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(file, id));
-				await writeFile(`./git.${id}.sh`, compileCSVToGitShell(file, id));
-				message = (await Promise.all(compileCSVToDNS(file).split(/\n/).map(async item => new Promise(async (resolve, reject) => {
+				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}git.${id}.sh`, compileCSVToGitShell(file, id));
+				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}pm2.${id}.sh`, `a=$(pm2 start -f ./output/pm2.${id}.config.js); echo $a`);
+				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}pm2.${id}.config.js`, compileCSVToPM2Config(file, id));
+				message = (await Promise.all(compileCSVToDNS(file).split(/\n/).map(item => new Promise(async (resolve, reject) => {
 					const t = item.split(",");
 					resolve((await (await fetch(await compileAliyunURI({
 						Action : "AddDomainRecord",

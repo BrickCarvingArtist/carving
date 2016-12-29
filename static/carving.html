@@ -43,52 +43,59 @@
 			<b>20160801班 杭州西湖</b>
 			<input type="file" />
 			<input type="button" class="repository" value="克隆/更新仓库" />
+			<input type="button" class="server" value="启动/重启项目服务器" />
 		</li>
 		<li id="20160912.xihu">
 			<b>20160912班 杭州西湖</b>
 			<input type="file" />
 			<input type="button" class="repository" value="克隆/更新仓库" />
+			<input type="button" class="server" value="启动/重启项目服务器" />
 		</li>
 		<li id="20160912.xiasha">
 			<b>20160912班 杭州下沙</b>
 			<input type="file" />
 			<input type="button" class="repository" value="克隆/更新仓库" />
+			<input type="button" class="server" value="启动/重启项目服务器" />
 		</li>
 		<li id="20160912.qinhuai">
 			<b>20160912班 南京秦淮</b>
 			<input type="file" />
 			<input type="button" class="repository" value="克隆/更新仓库" />
+			<input type="button" class="server" value="启动/重启项目服务器" />
 		</li>
 		<li id="20161010.xihu">
 			<b>20161010班 杭州西湖</b>
 			<input type="file" />
 			<input type="button" class="repository" value="克隆/更新仓库" />
+			<input type="button" class="server" value="启动/重启项目服务器" />
 		</li>
 		<li id="20161010.xiasha">
 			<b>20161010班 杭州下沙</b>
 			<input type="file" />
 			<input type="button" class="repository" value="克隆/更新仓库" />
+			<input type="button" class="server" value="启动/重启项目服务器" />
 		</li>
 		<li id="20161010.putuo">
 			<b>20161010班 上海普陀</b>
 			<input type="file" />
 			<input type="button" class="repository" value="克隆/更新仓库" />
+			<input type="button" class="server" value="启动/重启项目服务器" />
 		</li>
 		<li>
-			<input type="button" value="重启服务器" id="restart" />
+			<input type="button" value="重启代理服务器" id="restart" />
 		</li>
 		<div id="output"></div>
 		<script src="/socket.io.js"></script>
 		<script>
 			!(() => {
-				let git = io("/git");
+				let command = io("/command");
 				function qsa(selector){
 					return document.querySelectorAll(selector);
 				}
 				function log(text){
 					return output.innerHTML = `<pre>${text}</pre>${output.innerHTML}`;
 				}
-				git.on("message", data => {
+				command.on("message", data => {
 					log(data);
 				});
 				[].forEach.call(qsa("[type=file]"), item => {
@@ -111,7 +118,18 @@
 				});
 				[].forEach.call(qsa(".repository"), item => {
 					item.onclick = function(){
-						git.emit("ack", this.parentNode.id, res => log(res));
+						command.emit("ack", {
+							type : "repository",
+							id : this.parentNode.id
+						}, res => log(res));
+					};
+				});
+				[].forEach.call(qsa(".server"), item => {
+					item.onclick = function(){
+						command.emit("ack", {
+							type : "server",
+							id : this.parentNode.id
+						}, res => log(res));
 					};
 				});
 				restart.onclick = () => {
