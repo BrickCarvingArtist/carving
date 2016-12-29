@@ -60,17 +60,32 @@ else
 	a=$(git clone https://www.github.com/${projectPath}.git)
 fi
 echo $a
-echo "completely downloaded the repository."
+echo "Completely downloaded the repository."
 ${[
 `cd ${projectName}
 a=$(npm install --production)
 echo $a
-echo "completely installed the dependencies."
-pm2 stop ${name}_${projectName}
-a=$(pm2 start server.js --name=${name}_${projectName})
-echo $a\n`,
+echo "Completely installed the dependencies."\n`,
 ""][+!port]}`;
 });
+export const compileCSVToPM2Config = (str, id) => `module.exports = {
+	apps : [
+		${compileCSV((str, id) => {
+			const conf = str.split(","),
+				name = conf[1],
+				projectName = conf[3].split("/")[1];
+			return `,\n\t\t{
+			name : "${id}.${name}_${projectName}",
+			cwd : "${GIT_REPOSITORY_PATH_PREFIX}${id}/${name}/${projectName}/",
+			script : "server.js",
+			exec_mode : "cluster",
+			instances : "max",
+			min_uptime : "1h",
+			max_restarts : 5
+		}`;
+})(str, id).slice(4)}
+	]
+};`;
 export const compileCSVToDNS = str => compileCSV(str => {
 	const conf = str.split(",");
 	return `\n${conf[2]}.cn,${conf[3].split("/")[1]}.${conf[1]}`;

@@ -1,0 +1,1 @@
+a=$(pm2 start -f ./pm2.20161010.xiasha.config.js); echo $a

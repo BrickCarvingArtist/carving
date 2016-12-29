@@ -4,8 +4,8 @@ import serve from "koa-static";
 import bodyParser from "koa-bodyparser";
 import {SERVER_CONFIG} from "./config";
 import routes from "./router";
-import git from "./git";
-git(new Koa)
+import command from "./command";
+command(new Koa)
 	.use(serve("./static"))
 	.use(bodyParser())
 	.use(routes)
