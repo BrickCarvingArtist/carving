@@ -25,9 +25,9 @@ export default new Router()
 		if(VALID_TIME_AREA[i[0]] && VALID_TIME_AREA[i[0]].includes(i[1])){
 			try{
 				await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(file, id));
-				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}git.${id}.sh`, compileCSVToGitShell(file, id));
-				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}pm2.${id}.sh`, `a=$(pm2 start -f ./output/pm2.${id}.config.js); echo $a`);
-				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}pm2.${id}.config.js`, compileCSVToPM2Config(file, id));
+				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/git.sh`, compileCSVToGitShell(file, id));
+				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.sh`, `a=$(pm2 start -f ${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.config.js); echo $a`);
+				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.config.js`, compileCSVToPM2Config(file, id));
 				message = (await Promise.all(compileCSVToDNS(file).split(/\n/).map(item => new Promise(async (resolve, reject) => {
 					const t = item.split(",");
 					resolve((await (await fetch(await compileAliyunURI({
@@ -37,7 +37,7 @@ export default new Router()
 						Type : "A",
 						Value : SERVER_CONFIG.IP
 					}))).json()).Message);
-				})))).concat("all domain names completely sent to the resolution.").join("\n");
+				})))).concat("All domain names completely sent to the resolution.").join("\n");
 			}catch(e){
 				message = e.toString().replace(/.*:(.*)/, "$1");
 			}
@@ -51,13 +51,13 @@ export default new Router()
 		try{
 			await exec("nginx -s stop");
 			await exec(`nginx -c ${NGINX_CONF_PATH_PREFIX}nginx.conf`);
-			message = "main server successfully restarted.";
+			message = "Main server successfully restarted.";
 		}catch(e){
 			message = e.toString().replace(/.*:(.*)/, "$1");
 		}
 		response.body = message;
 	})
 	.get("*", ({response}) => {
-		response.body = "access denied";
+		response.body = "Access denied.";
 	})
 	.routes();

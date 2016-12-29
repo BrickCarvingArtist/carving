@@ -60,12 +60,12 @@ else
 	a=$(git clone https://www.github.com/${projectPath}.git)
 fi
 echo $a
-echo "completely downloaded the repository."
+echo "Completely downloaded the repository."
 ${[
 `cd ${projectName}
 a=$(npm install --production)
 echo $a
-echo "completely installed the dependencies."\n`,
+echo "Completely installed the dependencies."\n`,
 ""][+!port]}`;
 });
 export const compileCSVToPM2Config = (str, id) => `module.exports = {
