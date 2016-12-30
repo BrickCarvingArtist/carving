@@ -78,8 +78,6 @@ export const compileCSVToPM2Config = (str, id) => `module.exports = {
 			name : "${id}.${name}_${projectName}",
 			cwd : "${GIT_REPOSITORY_PATH_PREFIX}${id}/${name}/${projectName}/",
 			script : "server.js",
-			exec_mode : "cluster",
-			instances : "max",
 			min_uptime : "1h",
 			max_restarts : 5
 		}`;

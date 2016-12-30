@@ -42,7 +42,7 @@ export default new Router()
 				message = e.toString().replace(/.*:(.*)/, "$1");
 			}
 		}else{
-			message = "access denied";
+			message = "Access denied.";
 		}
 		response.body = message;
 	})
