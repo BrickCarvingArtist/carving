@@ -4,12 +4,10 @@ import crypto from "crypto";
 import {forIn} from "lodash";
 import {ACCESS_KEY_ID, ACCESS_KEY_SECRET, GIT_REPOSITORY_PATH_PREFIX} from "./config";
 const promisify = fn => function(){
-	return new Promise((resolve, reject) => {
-		fn(...arguments, (err, ...rest) => {
-			err && reject(err);
-			resolve(...rest);
-		});
-	});
+	return new Promise((resolve, reject) => fn(...arguments, (err, ...rest) => {
+		err && reject(err);
+		resolve(...rest);
+	}));
 };
 const compileCSV = fn => (file, ...rest) => {
 	let t = file.split(/\r?\n/);

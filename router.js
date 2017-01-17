@@ -24,10 +24,12 @@ export default new Router()
 		let message;
 		if(VALID_TIME_AREA[i[0]] && VALID_TIME_AREA[i[0]].includes(i[1])){
 			try{
-				await writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(file, id));
-				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/git.sh`, compileCSVToGitShell(file, id));
-				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.sh`, `a=$(pm2 start -f ${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.config.js); echo $a`);
-				await writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.config.js`, compileCSVToPM2Config(file, id));
+				await Promise.all([
+					writeFile(`${NGINX_CONF_PATH_PREFIX}${id}.conf`, compileCSVToNginxConfig(file, id)),
+					writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/git.sh`, compileCSVToGitShell(file, id)),
+					writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.sh`, `a=$(pm2 start -f ${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.config.js); echo $a`),
+					writeFile(`${OUTPUT_FILES_PATH_PREFIX}${id}/pm2.config.js`, compileCSVToPM2Config(file, id))
+				]);
 				message = (await Promise.all(compileCSVToDNS(file).split(/\n/).map(item => new Promise(async (resolve, reject) => {
 					const t = item.split(",");
 					resolve((await (await fetch(await compileAliyunURI({
