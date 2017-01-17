@@ -1,8 +1,11 @@
 import fs from "fs";
 import child_process from "child_process";
 import crypto from "crypto";
-import {forIn} from "lodash";
 import {ACCESS_KEY_ID, ACCESS_KEY_SECRET, GIT_REPOSITORY_PATH_PREFIX} from "./config";
+const C = console;
+export const log = function(){
+	return C.log(...arguments);
+};
 const promisify = fn => function(){
 	return new Promise((resolve, reject) => fn(...arguments, (err, ...rest) => {
 		err && reject(err);
@@ -30,8 +33,8 @@ server {
 	server_name ${projectName}.${conf[1]}.${conf[2]}.cn;
 	location / {
 ${[
-`		proxy_pass http://127.0.0.1:${conf[4]};`,
-`		root ${GIT_REPOSITORY_PATH_PREFIX}${id}/${conf[1]}/${projectName};
+	`		proxy_pass http://127.0.0.1:${conf[4]};`,
+	`		root ${GIT_REPOSITORY_PATH_PREFIX}${id}/${conf[1]}/${projectName};
 		index index.html;
 		error_page 404 /;`
 ][+!port]}
@@ -60,11 +63,9 @@ else
 fi
 echo $a
 echo "Completely downloaded the repository."
-${[
-`a=$(npm install --production)
+${[`a=$(npm install --production)
 echo $a
-echo "Completely installed the dependencies."\n`,
-""][+!port]}`;
+echo "Completely installed the dependencies."\n`, ""][+!port]}`;
 });
 export const compileCSVToPM2Config = (str, id) => `module.exports = {
 	apps : [
@@ -79,7 +80,7 @@ export const compileCSVToPM2Config = (str, id) => `module.exports = {
 			min_uptime : "1h",
 			max_restarts : 5
 		}`;
-})(str, id).slice(4)}
+		})(str, id).slice(4)}
 	]
 };`;
 export const compileCSVToDNS = str => compileCSV(str => {

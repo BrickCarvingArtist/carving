@@ -6,7 +6,6 @@ import {
 	readFile, writeFile, exec,
 	compileCSVToNginxConfig,
 	compileCSVToGitShell,
-	compileCSVToPM2Shell,
 	compileCSVToPM2Config,
 	compileCSVToDNS,
 	compileAliyunURI
@@ -32,13 +31,17 @@ export default new Router()
 				]);
 				message = (await Promise.all(compileCSVToDNS(file).split(/\n/).map(item => new Promise(async (resolve, reject) => {
 					const t = item.split(",");
-					resolve((await (await fetch(await compileAliyunURI({
-						Action : "AddDomainRecord",
-						DomainName : t[0],
-						RR : t[1],
-						Type : "A",
-						Value : SERVER_CONFIG.IP
-					}))).json()).Message);
+					try{
+						resolve((await (await fetch(await compileAliyunURI({
+							Action : "AddDomainRecord",
+							DomainName : t[0],
+							RR : t[1],
+							Type : "A",
+							Value : SERVER_CONFIG.IP
+						}))).json()).Message);
+					}catch(e){
+						reject(e);
+					}
 				})))).concat("All domain names completely sent to the resolution.").join("\n");
 			}catch(e){
 				message = e.toString().replace(/.*:(.*)/, "$1");
